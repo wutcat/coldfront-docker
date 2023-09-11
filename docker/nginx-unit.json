@@ -1,0 +1,56 @@
+{
+  "listeners": {
+    "0.0.0.0:8080": {
+      "pass": "routes/main"
+    },
+    "[::]:8080": {
+      "pass": "routes/main"
+    },
+    "0.0.0.0:8081": {
+      "pass": "routes/status"
+    },
+    "[::]:8081": {
+      "pass": "routes/status"
+    }
+  },
+  "routes": {
+    "main": [
+      {
+        "match": {
+          "uri": "/static/*"
+        },
+        "action": {
+          "share": "/srv/coldfront${uri}"
+        }
+      },
+      {
+        "action": {
+          "pass": "applications/coldfront"
+        }
+      }
+    ],
+    "status": [
+      {
+        "match": {
+          "uri": "/status/*"
+        },
+        "action": {
+          "proxy": "http://unix:/opt/unit/unit.sock"
+        }
+      }
+    ]
+  },
+  "applications": {
+    "coldfront": {
+      "type": "python 3",
+      "module": "coldfront.config.wsgi",
+      "home": "/srv/coldfront/venv",
+      "processes": {
+        "max": 4,
+        "spare": 1,
+        "idle_timeout": 120
+      }
+    }
+  },
+  "access_log": "/dev/stdout"
+}

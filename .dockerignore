@@ -1,0 +1,7 @@
+.git*
+*.md
+build*
+docker-compose*
+env
+test-configuration
+.coldfront/.git*
